@@ -2,7 +2,7 @@
 
 *Kalabit* is Filipino for a gentle tap on the shoulder: the nudge that says "hey, look at this". That is what this system does for applications. Kalabit is a notification platform that accepts email requests over a simple HTTP API, queues them safely, sends them in the background, and lets you see what happened to every message.
 
-> **Status:** early development. The backend is being built week by week from the [build plan](docs/build-plan.md). Sections below describe the target setup and will fill in as each milestone lands.
+> **Status:** early development. The backend is being built week by week from the [build plan](Notification_Platform_Build_Plan.pdf). Sections below describe the target setup and will fill in as each milestone lands.
 
 ## What the backend does
 
