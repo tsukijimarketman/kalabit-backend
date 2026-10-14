@@ -11,6 +11,8 @@ public sealed class NotificationDbContext(
     DbContextOptions<NotificationDbContext> options) : DbContext(options)
 {
     public DbSet<Client> Clients => Set<Client>();
+    public DbSet<Template> Templates => Set<Template>();
+    public DbSet<TemplateVersion> TemplateVersion => Set<TemplateVersion>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
