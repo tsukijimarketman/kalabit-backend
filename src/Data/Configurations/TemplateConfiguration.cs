@@ -44,7 +44,7 @@ public sealed class TemplateConfiguration : IEntityTypeConfiguration<Template>
 
         builder.HasIndex(template => template.TemplateKey)
             .IsUnique()
-            .HasDatabaseName("ux_tempaltes_template_key");
+            .HasDatabaseName("ux_templates_template_key");
 
         builder.Property(template => template.IsActive)
             .HasColumnName("is_active")

@@ -12,7 +12,12 @@ public sealed class NotificationDbContext(
 {
     public DbSet<Client> Clients => Set<Client>();
     public DbSet<Template> Templates => Set<Template>();
-    public DbSet<TemplateVersion> TemplateVersion => Set<TemplateVersion>();
+    public DbSet<TemplateVersion> TemplateVersions => Set<TemplateVersion>();
+    public DbSet<NotificationIdentity> NotificationIdentities => Set<NotificationIdentity>(); 
+    public DbSet<Notification> Notifications => Set<Notification>(); 
+    public DbSet<NotificationRecipient> NotificationRecipients => Set<NotificationRecipient>(); 
+    public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>(); 
+    public DbSet<NotificationAttempt> NotificationAttempts => Set<NotificationAttempt>(); 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

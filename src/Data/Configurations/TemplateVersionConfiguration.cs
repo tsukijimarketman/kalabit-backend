@@ -66,6 +66,6 @@ public sealed class TemplateVersionConfiguration : IEntityTypeConfiguration<Temp
 
         builder.HasIndex(version => new { version.TemplateId, version.VersionNumber })
             .IsUnique()
-            .HasDatabaseName("ux_template_versions_template_id_verrsion_number");
+            .HasDatabaseName("ux_template_versions_template_id_version_number");
     }
 }
