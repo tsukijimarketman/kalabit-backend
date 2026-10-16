@@ -7,5 +7,4 @@ public sealed class NotificationIdentity : Entity
     public string? PayloadHash { get; set; }
     public DateTimeOffset? IdempotencyExpiresAt { get; set; }
     public Client Client { get; set; } = null!;
-    public Notification Notification { get; set; } = null!;
 }

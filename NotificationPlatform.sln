@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationPlatform.UnitTests", "tests\NotificationPlatform.UnitTests\NotificationPlatform.UnitTests.csproj", "{F955768F-B6CE-48A3-9598-6039FB01D66A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Migrator", "src\Migrator\Migrator.csproj", "{720F870C-5581-4212-8FAC-8D2D968C404F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,18 @@ Global
 		{F955768F-B6CE-48A3-9598-6039FB01D66A}.Release|x64.Build.0 = Release|Any CPU
 		{F955768F-B6CE-48A3-9598-6039FB01D66A}.Release|x86.ActiveCfg = Release|Any CPU
 		{F955768F-B6CE-48A3-9598-6039FB01D66A}.Release|x86.Build.0 = Release|Any CPU
+		{720F870C-5581-4212-8FAC-8D2D968C404F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{720F870C-5581-4212-8FAC-8D2D968C404F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{720F870C-5581-4212-8FAC-8D2D968C404F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{720F870C-5581-4212-8FAC-8D2D968C404F}.Debug|x64.Build.0 = Debug|Any CPU
+		{720F870C-5581-4212-8FAC-8D2D968C404F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{720F870C-5581-4212-8FAC-8D2D968C404F}.Debug|x86.Build.0 = Debug|Any CPU
+		{720F870C-5581-4212-8FAC-8D2D968C404F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{720F870C-5581-4212-8FAC-8D2D968C404F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{720F870C-5581-4212-8FAC-8D2D968C404F}.Release|x64.ActiveCfg = Release|Any CPU
+		{720F870C-5581-4212-8FAC-8D2D968C404F}.Release|x64.Build.0 = Release|Any CPU
+		{720F870C-5581-4212-8FAC-8D2D968C404F}.Release|x86.ActiveCfg = Release|Any CPU
+		{720F870C-5581-4212-8FAC-8D2D968C404F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,5 +111,6 @@ Global
 		{56CBC79B-90A5-4886-B4F0-2DEF532758F9} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{9349AEA0-CABB-4AFA-BCE2-4C94D15688A5} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{F955768F-B6CE-48A3-9598-6039FB01D66A} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
+		{720F870C-5581-4212-8FAC-8D2D968C404F} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 	EndGlobalSection
 EndGlobal

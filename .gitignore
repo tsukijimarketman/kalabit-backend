@@ -26,6 +26,7 @@ TestResults/
 !.env.example
 secrets.json
 secrets.*.json
+appsettings.Development.json
 
 # Logs and temporary files
 *.log

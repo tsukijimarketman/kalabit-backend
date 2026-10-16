@@ -63,7 +63,7 @@ public sealed class NotificationConfiguration : IEntityTypeConfiguration<Notific
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(notification => notification.Identity)
-            .WithOne(identity => identity.Notification)
+            .WithOne()
             .HasForeignKey<Notification>(notification => new
             {
                 notification.Id,

@@ -68,5 +68,12 @@ public sealed class NotificationIdentityConfiguration : IEntityTypeConfiguration
         .IsUnique()
         .HasFilter("\"idempotency_key\" IS NOT NULL")
         .HasDatabaseName("ux_notification_identities_client_idempotency_key");
+
+        builder.HasAlternateKey(identity => new
+        {
+            identity.Id,
+            identity.CreatedAt
+        })
+        .HasName("ak_notification_identities_id_created_at");
     }
 }
