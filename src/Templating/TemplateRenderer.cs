@@ -1,6 +1,7 @@
 using Fluid;
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Encodings.Web;
 
@@ -9,22 +10,27 @@ namespace Templating;
 public sealed class TemplateRenderer
 {
     private static readonly FluidParser Parser = new();
+    private const int MaxOutputCharacters = 256_000;
+    private const int DefaultMaxSteps = 10_000;
+    private readonly int _maxSteps;
 
-    public async Task<string> RenderAsync(string templateSource, object model)
+    public TemplateRenderer(int maxSteps = DefaultMaxSteps)
     {
-        ArgumentNullException.ThrowIfNull(templateSource);
-        ArgumentNullException.ThrowIfNull(model);
-
-        if (!Parser.TryParse(templateSource, out var template, out var error))
-        {
-            throw new FormatException($"Template parsing failed: {error}");
-        }
-
-        var context = new TemplateContext(model);
-        return await template.RenderAsync(context);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maxSteps);
+        _maxSteps = maxSteps;
     }
 
-    public async Task<string> RenderHtmlAsync(string templateSource, object model)
+    public Task<string> RenderHtmlAsync(string templateSource, object model)
+    {
+        return RenderAsync(templateSource, model, encodeHtml: true);
+    }
+
+    public Task<string> RenderTextAsync(string templateSource, object model)
+    {
+        return RenderAsync(templateSource, model, encodeHtml: false);
+    }
+
+    public async Task<string> RenderAsync(string templateSource, object model, bool encodeHtml)
     {
         ArgumentNullException.ThrowIfNull(templateSource);
         ArgumentNullException.ThrowIfNull(model);
@@ -34,22 +40,25 @@ public sealed class TemplateRenderer
             throw new FormatException($"Template parsing failed: {error}");
         }
 
-        var context = new TemplateContext(model);
-        return await template.RenderAsync(context, HtmlEncoder.Default);
-    }
-
-    public async Task<string> RenderHtmlAsyncv2(string templateSource, object model)
-    {
-        ArgumentNullException.ThrowIfNull(templateSource);
-        ArgumentNullException.ThrowIfNull(model);
-
-        if (!Parser.TryParse(templateSource, out var template, out var error))
+        var options = new TemplateOptions
         {
-            throw new FormatException($"Template parsing failed: {error}");
+            StrictVariables = true,
+            MaxSteps = _maxSteps
+        };
+
+        var context = new TemplateContext(model, options);
+        using var output = new LimitedTextWriter(MaxOutputCharacters);
+
+        if (encodeHtml)
+        {
+            await template.RenderAsync(output, context, HtmlEncoder.Default);
+        }
+        else
+        {
+            await template.RenderAsync(output, context);
         }
 
-        var options = new TemplateOptions { StrictVariables = true };
-        var context = new TemplateContext(model, options);
-        return await template.RenderAsync(context, HtmlEncoder.Default);
+        return output.ToString();
     }
+
 }
