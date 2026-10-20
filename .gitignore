@@ -31,3 +31,5 @@ appsettings.Development.json
 # Logs and temporary files
 *.log
 *.tmp
+/src/NotificationSenderApi/appsettings.json
+/src/NotificationSenderApi/appsettings.Development.json
