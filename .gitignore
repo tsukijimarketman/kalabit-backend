@@ -27,9 +27,12 @@ TestResults/
 secrets.json
 secrets.*.json
 appsettings.Development.json
+appsettings.Production.json
+appsettings.Staging.json
 
 # Logs and temporary files
 *.log
 *.tmp
-/src/NotificationSenderApi/appsettings.json
 /src/NotificationSenderApi/appsettings.Development.json
+/src/NotificationSenderApi/appsettings.Production.json
+/src/NotificationSenderApi/appsettings.Staging.json
