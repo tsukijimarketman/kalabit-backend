@@ -23,18 +23,18 @@ updates:
         patterns:
           - "Microsoft.*"
         exclude-patterns:
-          - "Microsoft.EntityFrameworkCore"
+          - "Microsoft.EntityFrameworkCore*"
           - "Microsoft.NET.Test.Sdk"
-    #stay on .NET 10 LTS majors, see ADR-001 (docs/adr)#
+    #stay on .NET 10 LTS majors, see ADR-001 (docs/adr)
     ignore:
       - dependency-name: "Microsoft.AspNetCore.*"
-        update-types: "version-update:semver-major"
+        update-types: version-update:semver-major
       - dependency-name: "Microsoft.EntityFrameworkCore*"
-        update-types: "version-update:semver-major"
+        update-types: version-update:semver-major
       - dependency-name: "Microsoft.Extensions.*"
-        update-types: "version-update:semver-major"
+        update-types: version-update:semver-major
       - dependency-name: "Npgsql*"
-        update-types: "version-update:semver-major"
+        update-types: version-update:semver-major
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
