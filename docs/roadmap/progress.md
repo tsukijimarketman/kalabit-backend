@@ -19,3 +19,15 @@ The `/continue-build` skill appends to this file. Newest entries are at the bott
 - Left: fix the `POSGRES_DB` typo in .env.example; make the .http `{{host}}` match `@NotificationSenderApi_HostAddress`; then commit (split into 4 commits suggested) and push
 - Next: Day 2 (Sat 14 Nov): CI workflow, Dependabot (include the docker ecosystem), ADR-001 to ADR-009, Supabase project
 - Build/tests: build OK with 0 warnings; 9/9 unit tests pass
+
+## 2026-11-12 · wrap · Day 1 ✅ DONE
+- Evidence: all Day 1 fingerprints pass; `POSTGRES_DB` typo fixed; .http request resolves (hard-coded URL); committed as `5804988 clean up day 1` and pushed (main = origin/main)
+- Left: learning note `docs/notes/111226.md` (optional); nit: `.http:3` hard-codes the URL instead of using `{{NotificationSenderApi_HostAddress}}`, so fix it when you next touch the file
+- Next: Day 2 (Sat 14 Nov, 5h): Supabase project first, then `.github/workflows/ci.yml`, `.github/dependabot.yml` (nuget + github-actions + docker), ADR-001 to ADR-009, CI badge, make the repo public, social post #1
+- Build/tests: build OK with 0 warnings; 9/9 unit tests pass
+
+## 2026-11-12 · resume · Day 2 (two days ahead of the calendar; Thursday, so 1h budget)
+- Evidence: Day 1 complete and pushed. Uncommitted: the .http now uses `{{NotificationSenderApi_HostAddress}}` (nit fixed) and this log. Missing for Day 2: `.github/`, ADRs (`docs/adr/` has only `.gitkeep`), CI badge
+- Secret scan before going public: history clean (connection strings have empty `Password=`); commit author emails include a work address (user's call)
+- Next: commit the pending changes, create the Supabase project (Singapore), then write `.github/workflows/ci.yml` and push until green
+- Build/tests: build OK with 0 warnings; 9/9 unit tests pass

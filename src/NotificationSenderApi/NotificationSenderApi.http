@@ -1,6 +1,6 @@
 @NotificationSenderApi_HostAddress = http://localhost:5192
 
-GET http://localhost:5192/health/ready
+GET {{NotificationSenderApi_HostAddress}}/health/ready
 Accept: application/json
 
 ###
