@@ -12,16 +12,29 @@ updates:
     groups:
       ef-core:
         patterns:
-          - Microsoft.EntityFrameworkCore*
-          - Npgsql.*
-      testing: 
+          - "Microsoft.EntityFrameworkCore*"
+          - "Npgsql.*"
+      testing:
         patterns:
-          - xunit*
-          - coverlet*
-          - Microsoft.NET.Test.Sdk
-      microsoft: 
+          - "xunit*"
+          - "coverlet*"
+          - "Microsoft.NET.Test.Sdk"
+      microsoft:
         patterns:
-          - Microsoft.*
+          - "Microsoft.*"
+        exclude-patterns:
+          - "Microsoft.EntityFrameworkCore"
+          - "Microsoft.NET.Test.Sdk"
+    #stay on .NET 10 LTS majors, see ADR-001 (docs/adr)#
+    ignore:
+      - dependency-name: "Microsoft.AspNetCore.*"
+        update-types: "version-update:semver-major"
+      - dependency-name: "Microsoft.EntityFrameworkCore*"
+        update-types: "version-update:semver-major"
+      - dependency-name: "Microsoft.Extensions.*"
+        update-types: "version-update:semver-major"
+      - dependency-name: "Npgsql*"
+        update-types: "version-update:semver-major"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
