@@ -38,3 +38,4 @@ jobs:
           name: coverage
           path: TestResults/**/coverage.cobertura.xml
           retention-days: 7
+          if-no-files-found: error
