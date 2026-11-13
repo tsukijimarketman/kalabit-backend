@@ -31,3 +31,10 @@ The `/continue-build` skill appends to this file. Newest entries are at the bott
 - Secret scan before going public: history clean (connection strings have empty `Password=`); commit author emails include a work address (user's call)
 - Next: commit the pending changes, create the Supabase project (Singapore), then write `.github/workflows/ci.yml` and push until green
 - Build/tests: build OK with 0 warnings; 9/9 unit tests pass
+
+## 2026-11-13 · resume · Day 2 (calendar Day 1, Friday, 1h budget, one day ahead)
+- Evidence: Supabase project created; `ci.yml` green on main; ruleset requires `build-and-test`; `dependabot.yml` with nuget/actions/compose, `exclude-patterns` groups, and an ignore rule for .NET-aligned majors (ADR-001); all Dependabot PRs merged. Merged main verified: build OK, 9/9 tests with xunit.runner 4
+- Decision: Claude writes documentation markdown on request (ADRs, runbooks); the user keeps typing all code and config, and writes their own learning notes
+- Done today: ADR-0001 to ADR-0009 and `docs/adr/README.md` drafted by Claude on branch `docs/ard-001-009` (typo in branch name)
+- Left for Day 2: the user reads the ADRs, then the PR; CI badge in the README; make the repo public; Post #1
+- Build/tests: build OK with 0 warnings; 9/9 unit tests pass
