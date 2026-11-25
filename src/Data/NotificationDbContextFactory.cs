@@ -18,16 +18,13 @@ public sealed class NotificationDbContextFactory
             directory = directory.Parent;
         }
 
-        if (directory is null)
-        {
-            throw new InvalidOperationException(
-                "Could not find appsettings.json in the current directory or its parent directories.");
-        }
+        var basePath = directory?.FullName ?? Directory.GetCurrentDirectory();
 
         var configuration = new ConfigurationBuilder()
-            .SetBasePath(directory.FullName)
-            .AddJsonFile("appsettings.json", optional: false)
+            .SetBasePath(basePath)
+            .AddJsonFile("appsettings.json", optional: true)
             .AddJsonFile("appsettings.Development.json", optional: true)
+            .AddEnvironmentVariables()
             .Build();
 
         var connectionString =
@@ -37,11 +34,13 @@ public sealed class NotificationDbContextFactory
             connectionString.EndsWith("Password=", StringComparison.Ordinal))
         {
             throw new InvalidOperationException(
-                "Configure ConnectionStrings:NotificationDatabase in appsettings.Development.json.");
+                "Configure ConnectionStrings:NotificationDatabase in appsettings.Development.json " +
+                "or the ConnectionStrings__NotificationDatabase environment variable.");
         }
 
         var options = new DbContextOptionsBuilder<NotificationDbContext>()
-            .UseNpgsql(connectionString)
+            .UseNpgsql(connectionString, npgsql => 
+                npgsql.MigrationsHistoryTable("__EFMigrationsHistory", NotificationDbContext.Schema))
             .AddInterceptors(new AuditTimestampsInterceptor(TimeProvider.System))
             .Options;
 

@@ -2,7 +2,7 @@
 
 Each file records one decision: the context, the decision, its consequences, and the evidence that would make us change it. Accepted ADRs are not edited. If a decision changes, write a new ADR that supersedes the old one, and set the old one's status to "Superseded by ADR-xxxx".
 
-ADRs 0002 to 0006 deliberately differ from the [PRD](../../Notification_Platform_PRD_v2.0.pdf) so that v0.1 can run at zero cost. Each one names the trigger for moving back toward the PRD design.
+ADRs 0002 to 0006 and 0010 deliberately differ from the [PRD](../../Notification_Platform_PRD_v2.0.pdf) so that v0.1 can run at zero cost. Each one names the trigger for moving back toward the PRD design.
 
 | ADR | Decision | Status |
 |---|---|---|
@@ -15,6 +15,7 @@ ADRs 0002 to 0006 deliberately differ from the [PRD](../../Notification_Platform
 | [0007](0007-resource-style-email-routes.md) | Use resource-style routes `POST /api/v1/emails` and `GET /api/v1/emails/{id}` | Accepted |
 | [0008](0008-trial-render-at-accept-time.md) | Validate template data with a trial render at accept time | Accepted |
 | [0009](0009-public-api-reference-for-sender-api.md) | Publish the Sender API's OpenAPI document and Scalar reference in production | Accepted |
+| [0010](0010-defer-notifications-partitioning.md) | Defer monthly partitioning of `notifications` | Accepted |
 
 ## Template
 
