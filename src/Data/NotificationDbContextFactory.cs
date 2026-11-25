@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
+using Data.Interceptors;
 
 namespace Data;
 
@@ -41,6 +42,7 @@ public sealed class NotificationDbContextFactory
 
         var options = new DbContextOptionsBuilder<NotificationDbContext>()
             .UseNpgsql(connectionString)
+            .AddInterceptors(new AuditTimestampsInterceptor(TimeProvider.System))
             .Options;
 
         return new NotificationDbContext(options);

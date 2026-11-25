@@ -15,6 +15,8 @@ public sealed class NotificationAttempt : Entity
     public DateTimeOffset CompletedAt { get; set; }
     public NotificationAttemptOutcome Outcome { get; set; }
     public int? SmtpStatusCode { get; set; }
+    public FailureClass? FailureClass { get; set; }
+    public string? ErrorMessage { get; set; }
     public required string WorkerId { get; set; }
     public long DurationMilliseconds { get; set; }
 }

@@ -38,3 +38,10 @@ The `/continue-build` skill appends to this file. Newest entries are at the bott
 - Done today: ADR-0001 to ADR-0009 and `docs/adr/README.md` drafted by Claude on branch `docs/ard-001-009` (typo in branch name)
 - Left for Day 2: the user reads the ADRs, then the PR; CI badge in the README; make the repo public; Post #1
 - Build/tests: build OK with 0 warnings; 9/9 unit tests pass
+
+## 2026-11-25 · resume · Day 3 (calendar Day 13, Wednesday, 1h budget, 10 days behind)
+- Evidence: Day 3 Steps 1–7 are done but uncommitted on `feat/v01-schema`: `kalabit` default schema; `AuditTimestampsInterceptor` + `TimeProvider`; `FailureClass`; `ApiKey`; Client/Template/TemplateVersion/Identity changes; Notification queue columns + partial indexes; `ClientDailyUsage`; `KeepAliveHeartbeat`
+- In progress: Step 8 not started (factory has no `AddEnvironmentVariables` or history-table schema; Migrator still only calls `CanConnectAsync`)
+- Stashes: `stash@{0}` = an identical backup of the current working tree; `stash@{1}` = the Day 2 check/wrap log entries; `stash@{2}` = old log
+- Next: commit Steps 1–7 as a checkpoint, then Step 8, then Step 9 (regenerate InitialCreate, run the Migrator twice)
+- Build/tests: build OK with 0 warnings; 9/9 unit tests pass

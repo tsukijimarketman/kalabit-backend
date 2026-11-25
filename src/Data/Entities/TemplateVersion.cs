@@ -14,6 +14,7 @@ public sealed class TemplateVersion : Entity
     public required string TextBodyTemplate { get; set; }
     public required string VariablesSchemaJson { get; set; }
     public TemplateVersionStatus Status { get; set; } = TemplateVersionStatus.Draft;
+    public DateTimeOffset? PublishedAt { get; set; }
     public required string ContentHash { get; set; }
     public Template Template { get; set; } = null!;
 }

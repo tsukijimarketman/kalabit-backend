@@ -37,18 +37,27 @@ public sealed class TemplateConfiguration : IEntityTypeConfiguration<Template>
         builder.Property(template => template.RowVersion)
             .IsRowVersion();
 
+        builder.Property(template => template.ClientId)
+            .HasColumnName("client_id")
+            .IsRequired();
+
         builder.Property(template => template.TemplateKey)
             .HasColumnName("template_key")
             .HasMaxLength(100)
             .IsRequired();
 
-        builder.HasIndex(template => template.TemplateKey)
+        builder.HasIndex(template => new { template.ClientId, template.TemplateKey })
             .IsUnique()
-            .HasDatabaseName("ux_templates_template_key");
+            .HasDatabaseName("ux_templates_client_id_template_key");
 
         builder.Property(template => template.IsActive)
             .HasColumnName("is_active")
             .IsRequired();
+
+        builder.HasOne(template => template.Client)
+            .WithMany()
+            .HasForeignKey(template => template.ClientId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(template => template.Versions)
             .WithOne(version => version.Template)

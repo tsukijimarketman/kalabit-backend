@@ -44,13 +44,22 @@ public sealed class ClientConfiguration : IEntityTypeConfiguration<Client>
         builder.Property(client => client.RowVersion)
             .IsRowVersion();
 
+        builder.Property(client => client.Name)
+            .HasColumnName("name")
+            .HasMaxLength(100)
+            .IsRequired();
+
+        builder.HasIndex(client => client.Name)
+            .IsUnique()
+            .HasDatabaseName("ux_clients_name");
+
         builder.Property(client => client.KeycloakClientId)
             .HasColumnName("keycloak_client_id")
-            .HasMaxLength(200)
-            .IsRequired();
+            .HasMaxLength(200);
 
         builder.HasIndex(client => client.KeycloakClientId)
             .IsUnique()
+            .HasFilter("\"keycloak_client_id\" IS NOT NULL")
             .HasDatabaseName("ux_clients_keycloak_client_id");
 
         builder.Property(client => client.IsActive)

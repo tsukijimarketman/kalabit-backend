@@ -61,6 +61,15 @@ public sealed class NotificationAttemptConfiguration : IEntityTypeConfiguration<
         builder.Property(attempt => attempt.SmtpStatusCode)
             .HasColumnName("smtp_status_code");
 
+        builder.Property(attempt => attempt.FailureClass)
+            .HasColumnName("failure_class")
+            .HasConversion<string>()
+            .HasMaxLength(20);
+
+        builder.Property(attempt => attempt.ErrorMessage)
+            .HasColumnName("error_message")
+            .HasMaxLength(500);
+
         builder.Property(attempt => attempt.WorkerId)
             .HasColumnName("worker_id")
             .HasMaxLength(200)
