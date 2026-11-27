@@ -40,11 +40,10 @@ public sealed class TemplateRenderer
             throw new FormatException($"Template parsing failed: {error}");
         }
 
-        var options = new TemplateOptions
-        {
-            StrictVariables = true,
-            MaxSteps = _maxSteps
-        };
+        var options = new TemplateOptionsBuilder()
+            .WithStrictVariables(true)
+            .WithMaxSteps(_maxSteps)
+            .Build();
 
         var context = new TemplateContext(model, options);
         using var output = new LimitedTextWriter(MaxOutputCharacters);

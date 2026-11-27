@@ -104,7 +104,7 @@ public class TemplateRendererTests
     #endregion
 
     [Fact]
-    public async Task RenderHtmlAsync_StopsWhenTemplateExceedsRecursionLimit()
+    public async Task RenderHtmlAsync_StopsWhenTemplateExceedsStepLimit()
     {
         var renderer = new TemplateRenderer();
         var template = "{% for number in (1..100000) %}{{ number }}{% endfor %}";
@@ -113,7 +113,7 @@ public class TemplateRendererTests
             () => renderer.RenderHtmlAsync(template, new { }));
 
         _output.WriteLine($"Rendering stopped: {exception.Message}");
-        Assert.Contains("maximum level of recursion", exception.Message);
+        Assert.Contains("steps", exception.Message);
     }
 
     [Fact]
