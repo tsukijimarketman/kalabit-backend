@@ -1,7 +1,4 @@
 using Lib.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Domain.Notifications;
 
@@ -13,7 +10,8 @@ public static class NotificationStateMachine
         current switch
         {
             NotificationStatus.Queued =>
-                next is NotificationStatus.Published
+                next is NotificationStatus.Sending
+                     or NotificationStatus.Published
                      or NotificationStatus.Suppressed
                      or NotificationStatus.Expired,
            
@@ -44,4 +42,15 @@ public static class NotificationStateMachine
             
             _ => false
         };
+
+    /// <summary>
+    /// True when no transition can leave <paramref name="status"/>: the notification is done.
+    /// </summary>
+    public static bool IsFinal(NotificationStatus status) =>
+        status is NotificationStatus.Delivered
+               or NotificationStatus.Bounced
+               or NotificationStatus.Failed
+               or NotificationStatus.DeadLettered
+               or NotificationStatus.Suppressed
+               or NotificationStatus.Expired;
 }

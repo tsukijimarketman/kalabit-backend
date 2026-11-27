@@ -10,6 +10,7 @@ public class NotificationStateMachineTests
     {
         var allowedTransitions = new HashSet<(NotificationStatus Current, NotificationStatus Next)> 
         {
+            (NotificationStatus.Queued, NotificationStatus.Sending),
             (NotificationStatus.Queued, NotificationStatus.Published),
             (NotificationStatus.Queued, NotificationStatus.Suppressed),
             (NotificationStatus.Queued, NotificationStatus.Expired),
@@ -47,6 +48,38 @@ public class NotificationStateMachineTests
                     actual == expected,
                     $"Transition {current} --> {next} was {actual}; expected {expected}");
             }
+        }
+    }
+
+    [Theory]
+    [InlineData(NotificationStatus.Queued, false)]
+    [InlineData(NotificationStatus.Published, false)]
+    [InlineData(NotificationStatus.Sending, false)]
+    [InlineData(NotificationStatus.Retrying, false)]
+    [InlineData(NotificationStatus.SmtpAccepted, false)]
+    [InlineData(NotificationStatus.Delivered, true)]
+    [InlineData(NotificationStatus.Bounced, true)]
+    [InlineData(NotificationStatus.Failed, true)]
+    [InlineData(NotificationStatus.DeadLettered, true)]
+    [InlineData(NotificationStatus.Suppressed, true)]
+    [InlineData(NotificationStatus.Expired, true)]
+    public void IsFinal_ReturnsExpectedResult(NotificationStatus status, bool expected)
+    {
+        Assert.Equal(expected, NotificationStateMachine.IsFinal(status));
+    }
+
+    [Fact]
+    public void IsFinal_IsTrueExactlyWhenNoTransitionLeavesTheStatus()
+    {
+        var statuses = Enum.GetValues<NotificationStatus>();
+
+        foreach (var status in statuses)
+        {
+            var hasWayOut = statuses.Any(next => NotificationStateMachine.CanTransition(status, next));
+
+            Assert.True(
+                NotificationStateMachine.IsFinal(status) == !hasWayOut,
+                $"{status}: IsFinal={NotificationStateMachine.IsFinal(status)} but hasWayOut={hasWayOut}");
         }
     }
 }
