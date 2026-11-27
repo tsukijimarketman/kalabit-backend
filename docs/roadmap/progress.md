@@ -53,3 +53,17 @@ The `/continue-build` skill appends to this file. Newest entries are at the bott
 - Left: commit and PR for Steps 8–9 and the docs; `.env.example` comment about quoting `$`; read ADR-0010 and data-model.md; learning note `docs/notes/112526.md`; Post #1 (M0 is now complete); drop stashes (`stash@{0}` is an identical backup; `stash@{1}` holds the old Day 2 log entries)
 - Next: Day 4, the state machine: allow `Queued → Sending`, document `Published` as Kafka-only, add `IsFinal(status)`, add `[Theory]` rows. Run `/continue-build replan` first, because you're 10 days behind
 - Build/tests: build OK with 0 warnings; 9/9 unit tests pass
+
+## 2026-11-27 · resume · Day 4 (calendar Day 15, Friday, 1h budget, 11 days behind)
+- Evidence: Day 3 merged (#23 `9d129cb`); Fluid.Core 3.0.0 upgrade merged (#24 `df4fb93`, builder API, step-limit test renamed); no open PRs; clean tree on `main`
+- In progress: nothing yet for Day 4. `NotificationStateMachine` has no `Queued → Sending` and no `IsFinal`
+- Note: Day 6's "add `FailureClass` in Lib" was already done on Day 3
+- Next: branch `feat/state-machine-queue`; test first: add `(Queued, Sending)` to the matrix test (red), then the transition (green); then `IsFinal` with a `[Theory]` and a consistency test
+- Build/tests: not re-run (CI is green on main)
+
+## 2026-11-27 · wrap · Day 4 ✅ DONE
+- Evidence: `Queued → Sending` allowed (matrix test row added test-first); `Published` documented as Kafka-only (`NotificationStatus.cs`); `IsFinal` added, with an 11-row `[Theory]` and a consistency test (`IsFinal` ⇔ no outgoing transition); the user explained why `Published` is skipped
+- Nits: `IsFinal` has no XML doc comment and its body isn't indented; the `Queued → Sending` test row sits last in its group
+- Remember on Day 23: `SmtpAccepted` isn't final, but with no webhooks in v0.1 rows stay there, so set `FinalizedAt` at `SmtpAccepted` or retention never erases those payloads
+- Next: Day 5, `RetryPolicy` in `Domain/Retry` (exponential backoff with full jitter, random source injected, table-driven tests). Run `/continue-build replan` (11 days behind)
+- Build/tests: build OK with 0 warnings; 21/21 unit tests pass
