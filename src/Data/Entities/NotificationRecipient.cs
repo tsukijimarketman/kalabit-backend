@@ -11,5 +11,5 @@ public sealed class NotificationRecipient : Entity
     public DateTimeOffset NotificationCreatedAt { get; set; }
     public required byte[] RecipientHash { get; set; }
     public required string MaskedAddress { get; set; }
-    public required byte[]? EncryptedAddressEnvelope { get; set; }
+    public byte[]? EncryptedAddressEnvelope { get; set; }
 }

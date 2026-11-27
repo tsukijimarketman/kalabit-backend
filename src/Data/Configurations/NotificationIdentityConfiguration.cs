@@ -11,24 +11,7 @@ public sealed class NotificationIdentityConfiguration : IEntityTypeConfiguration
 {
     public void Configure(EntityTypeBuilder<NotificationIdentity> builder)
     {
-        builder.ToTable("notification_identities", table =>
-        {
-            table.HasCheckConstraint(
-                "ck_notification_identities_idempotency_fields",
-                """
-                (
-                    "idempotency_key" IS NULL
-                    AND "payload_hash" IS NULL
-                    AND "idempotency_expires_at" IS NULL
-                )
-                OR
-                (
-                    "idempotency_key" IS NOT NULL
-                    AND "payload_hash" IS NOT NULL
-                    AND "idempotency_expires_at" IS NOT NULL
-                )
-                """);
-        });
+        builder.ToTable("notification_identities");
 
         builder.HasKey(identity => identity.Id);
 
@@ -46,14 +29,17 @@ public sealed class NotificationIdentityConfiguration : IEntityTypeConfiguration
 
         builder.Property(identity => identity.IdempotencyKey)
             .HasColumnName("idempotency_key")
+            .IsRequired()
             .HasMaxLength(200);
 
         builder.Property(identity => identity.PayloadHash)
             .HasColumnName("payload_hash")
+            .IsRequired()
             .HasMaxLength(64);
 
         builder.Property(identity => identity.IdempotencyExpiresAt)
-            .HasColumnName("idempotency_expires_at");
+            .HasColumnName("idempotency_expires_at")
+            .IsRequired();
 
         builder.HasOne(identity => identity.Client)
             .WithMany()
@@ -66,7 +52,6 @@ public sealed class NotificationIdentityConfiguration : IEntityTypeConfiguration
             identity.IdempotencyKey
         })
         .IsUnique()
-        .HasFilter("\"idempotency_key\" IS NOT NULL")
         .HasDatabaseName("ux_notification_identities_client_idempotency_key");
 
         builder.HasAlternateKey(identity => new

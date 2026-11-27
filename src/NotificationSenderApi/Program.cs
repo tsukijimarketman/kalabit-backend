@@ -1,6 +1,7 @@
 using Data;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using Data.Interceptors;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +14,11 @@ if (string.IsNullOrWhiteSpace(connectionString))
     throw new InvalidOperationException("Connection string is not configured");
 }
 
-builder.Services.AddDbContext<NotificationDbContext>(options => options.UseNpgsql(connectionString));
+builder.Services.AddSingleton(TimeProvider.System);
+builder.Services.AddSingleton<AuditTimestampsInterceptor>();
+builder.Services.AddDbContext<NotificationDbContext>((serviceProvider, options) =>
+    options.UseNpgsql(connectionString)
+    .AddInterceptors(serviceProvider.GetRequiredService<AuditTimestampsInterceptor>()));
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 var app = builder.Build();

@@ -38,3 +38,18 @@ The `/continue-build` skill appends to this file. Newest entries are at the bott
 - Done today: ADR-0001 to ADR-0009 and `docs/adr/README.md` drafted by Claude on branch `docs/ard-001-009` (typo in branch name)
 - Left for Day 2: the user reads the ADRs, then the PR; CI badge in the README; make the repo public; Post #1
 - Build/tests: build OK with 0 warnings; 9/9 unit tests pass
+
+## 2026-11-25 · resume · Day 3 (calendar Day 13, Wednesday, 1h budget, 10 days behind)
+- Evidence: Day 3 Steps 1–7 are done but uncommitted on `feat/v01-schema`: `kalabit` default schema; `AuditTimestampsInterceptor` + `TimeProvider`; `FailureClass`; `ApiKey`; Client/Template/TemplateVersion/Identity changes; Notification queue columns + partial indexes; `ClientDailyUsage`; `KeepAliveHeartbeat`
+- In progress: Step 8 not started (factory has no `AddEnvironmentVariables` or history-table schema; Migrator still only calls `CanConnectAsync`)
+- Stashes: `stash@{0}` = an identical backup of the current working tree; `stash@{1}` = the Day 2 check/wrap log entries; `stash@{2}` = old log
+- Next: commit Steps 1–7 as a checkpoint, then Step 8, then Step 9 (regenerate InitialCreate, run the Migrator twice)
+- Build/tests: build OK with 0 warnings; 9/9 unit tests pass
+
+## 2026-11-25 · wrap · Day 3 ✅ DONE
+- Evidence: the v0.1 schema from plan §5 is in the model (committed `353b082`); the factory reads environment variables and keeps the history table in `kalabit`; the Migrator logs pending migrations, applies them, and returns 0/1; `InitialCreate` regenerated (`20261125060352`) with no raw partitioning SQL; on fresh Docker Postgres, run 1 applied it and run 2 said "up to date"; 12 tables in `kalabit`, none in `public`
+- Docs by Claude: ADR-0010 (defer partitioning of notifications), `docs/data-model.md` rewritten for v0.1
+- Gotcha found: a `$` in the unquoted `.env` password was expanded by Docker Compose (fixed with single quotes)
+- Left: commit and PR for Steps 8–9 and the docs; `.env.example` comment about quoting `$`; read ADR-0010 and data-model.md; learning note `docs/notes/112526.md`; Post #1 (M0 is now complete); drop stashes (`stash@{0}` is an identical backup; `stash@{1}` holds the old Day 2 log entries)
+- Next: Day 4, the state machine: allow `Queued → Sending`, document `Published` as Kafka-only, add `IsFinal(status)`, add `[Theory]` rows. Run `/continue-build replan` first, because you're 10 days behind
+- Build/tests: build OK with 0 warnings; 9/9 unit tests pass

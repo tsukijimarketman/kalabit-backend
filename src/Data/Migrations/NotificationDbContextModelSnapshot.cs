@@ -17,10 +17,74 @@ namespace Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.12")
+                .HasDefaultSchema("kalabit")
+                .HasAnnotation("ProductVersion", "10.0.15")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Data.Entities.ApiKey", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("client_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expires_at");
+
+                    b.Property<byte[]>("KeyHash")
+                        .IsRequired()
+                        .HasColumnType("bytea")
+                        .HasColumnName("key_hash");
+
+                    b.Property<DateTimeOffset?>("LastUsedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_used_at");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Prefix")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("prefix");
+
+                    b.Property<DateTimeOffset?>("RevokedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("revoked_at");
+
+                    b.PrimitiveCollection<string[]>("Scopes")
+                        .IsRequired()
+                        .HasColumnType("text[]")
+                        .HasColumnName("scopes");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId")
+                        .HasDatabaseName("ix_api_keys_client_id");
+
+                    b.HasIndex("Prefix")
+                        .IsUnique()
+                        .HasDatabaseName("ux_api_keys_prefix");
+
+                    b.ToTable("api_keys", "kalabit", t =>
+                        {
+                            t.HasCheckConstraint("ck_api_keys_key_hash_length", "octet_length(\"key_hash\") = 32");
+                        });
+                });
 
             modelBuilder.Entity("Data.Entities.Client", b =>
                 {
@@ -50,10 +114,15 @@ namespace Data.Migrations
                         .HasColumnName("is_synthetic");
 
                     b.Property<string>("KeycloakClientId")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)")
                         .HasColumnName("keycloak_client_id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
 
                     b.Property<int>("RequestsPerMinute")
                         .HasColumnType("integer")
@@ -78,14 +147,67 @@ namespace Data.Migrations
 
                     b.HasIndex("KeycloakClientId")
                         .IsUnique()
-                        .HasDatabaseName("ux_clients_keycloak_client_id");
+                        .HasDatabaseName("ux_clients_keycloak_client_id")
+                        .HasFilter("\"keycloak_client_id\" IS NOT NULL");
 
-                    b.ToTable("clients", null, t =>
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("ux_clients_name");
+
+                    b.ToTable("clients", "kalabit", t =>
                         {
                             t.HasCheckConstraint("ck_clients_daily_quota_nonnegative", "\"daily_quota\" >= 0");
 
                             t.HasCheckConstraint("ck_clients_requests_per_minute_positive", "\"requests_per_minute\" > 0");
                         });
+                });
+
+            modelBuilder.Entity("Data.Entities.ClientDailyUsage", b =>
+                {
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("client_id");
+
+                    b.Property<DateOnly>("UsageDate")
+                        .HasColumnType("date")
+                        .HasColumnName("usage_date");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("integer")
+                        .HasColumnName("count");
+
+                    b.HasKey("ClientId", "UsageDate");
+
+                    b.ToTable("client_daily_usage", "kalabit", t =>
+                        {
+                            t.HasCheckConstraint("ck_client_daily_usage_count_nonnegative", "\"count\" >= 0");
+                        });
+                });
+
+            modelBuilder.Entity("Data.Entities.KeepAliveHeartbeat", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("PingedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("pinged_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("source");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("keepalive_heartbeats", "kalabit");
                 });
 
             modelBuilder.Entity("Data.Entities.Notification", b =>
@@ -97,6 +219,10 @@ namespace Data.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
+
+                    b.Property<int>("AttemptCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("attempt_count");
 
                     b.Property<Guid>("ClientId")
                         .HasColumnType("uuid")
@@ -114,6 +240,33 @@ namespace Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("expires_at");
 
+                    b.Property<DateTimeOffset?>("FinalizedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("finalized_at");
+
+                    b.Property<string>("LastError")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("last_error");
+
+                    b.Property<string>("LastFailureClass")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("last_failure_class");
+
+                    b.Property<DateTimeOffset?>("LeaseExpiresAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("lease_expires_at");
+
+                    b.Property<string>("LeaseOwner")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("lease_owner");
+
+                    b.Property<DateTimeOffset>("NextAttemptAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("next_attempt_at");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -127,14 +280,27 @@ namespace Data.Migrations
                     b.HasKey("Id", "CreatedAt");
 
                     b.HasIndex("CorrelationId")
-                        .HasDatabaseName("ix_notification_correlation_id");
+                        .HasDatabaseName("ix_notifications_correlation_id");
+
+                    b.HasIndex("LeaseExpiresAt")
+                        .HasDatabaseName("ix_notifications_expired_leases")
+                        .HasFilter("\"status\" = 'Sending'");
+
+                    b.HasIndex("NextAttemptAt")
+                        .HasDatabaseName("ix_notifications_due")
+                        .HasFilter("\"status\" IN ('Queued', 'Retrying')");
 
                     b.HasIndex("TemplateVersionId");
 
                     b.HasIndex("ClientId", "CreatedAt")
                         .HasDatabaseName("ix_notifications_client_id_created_at");
 
-                    b.ToTable("notifications", (string)null);
+                    b.ToTable("notifications", "kalabit", t =>
+                        {
+                            t.HasCheckConstraint("ck_notifications_attempt_count_nonnegative", "\"attempt_count\" >= 0");
+
+                            t.HasCheckConstraint("ck_notifications_lease_fields", "(\"lease_owner\" IS NULL) = (\"lease_expires_at\" IS NULL)");
+                        });
                 });
 
             modelBuilder.Entity("Data.Entities.NotificationAttempt", b =>
@@ -158,6 +324,16 @@ namespace Data.Migrations
                     b.Property<long>("DurationMilliseconds")
                         .HasColumnType("bigint")
                         .HasColumnName("duration_milliseconds");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("error_message");
+
+                    b.Property<string>("FailureClass")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("failure_class");
 
                     b.Property<DateTimeOffset>("NotificationCreatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -193,7 +369,7 @@ namespace Data.Migrations
                         .IsUnique()
                         .HasDatabaseName("ux_notification_attempts_notification_attempt_number");
 
-                    b.ToTable("notification_attempts", null, t =>
+                    b.ToTable("notification_attempts", "kalabit", t =>
                         {
                             t.HasCheckConstraint("ck_notification_attempts_attempt_number_positive", "\"attempt_number\" > 0");
 
@@ -215,16 +391,18 @@ namespace Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<DateTimeOffset?>("IdempotencyExpiresAt")
+                    b.Property<DateTimeOffset>("IdempotencyExpiresAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("idempotency_expires_at");
 
                     b.Property<string>("IdempotencyKey")
+                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)")
                         .HasColumnName("idempotency_key");
 
                     b.Property<string>("PayloadHash")
+                        .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)")
                         .HasColumnName("payload_hash");
@@ -236,13 +414,9 @@ namespace Data.Migrations
 
                     b.HasIndex("ClientId", "IdempotencyKey")
                         .IsUnique()
-                        .HasDatabaseName("ux_notification_identities_client_idempotency_key")
-                        .HasFilter("\"idempotency_key\" IS NOT NULL");
+                        .HasDatabaseName("ux_notification_identities_client_idempotency_key");
 
-                    b.ToTable("notification_identities", null, t =>
-                        {
-                            t.HasCheckConstraint("ck_notification_identities_idempotency_fields", "(\r\n    \"idempotency_key\" IS NULL\r\n    AND \"payload_hash\" IS NULL\r\n    AND \"idempotency_expires_at\" IS NULL\r\n)\r\nOR\r\n(\r\n    \"idempotency_key\" IS NOT NULL\r\n    AND \"payload_hash\" IS NOT NULL\r\n    AND \"idempotency_expires_at\" IS NOT NULL\r\n)");
-                        });
+                    b.ToTable("notification_identities", "kalabit");
                 });
 
             modelBuilder.Entity("Data.Entities.NotificationRecipient", b =>
@@ -285,7 +459,7 @@ namespace Data.Migrations
 
                     b.HasIndex("NotificationId", "NotificationCreatedAt");
 
-                    b.ToTable("notification_recipients", (string)null);
+                    b.ToTable("notification_recipients", "kalabit");
                 });
 
             modelBuilder.Entity("Data.Entities.OutboxMessage", b =>
@@ -340,7 +514,7 @@ namespace Data.Migrations
 
                     b.HasIndex("NotificationId", "NotificationCreatedAt");
 
-                    b.ToTable("outbox_messages", (string)null);
+                    b.ToTable("outbox_messages", "kalabit");
                 });
 
             modelBuilder.Entity("Data.Entities.Template", b =>
@@ -348,6 +522,10 @@ namespace Data.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
                         .HasColumnName("id");
+
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("client_id");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -385,11 +563,11 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TemplateKey")
+                    b.HasIndex("ClientId", "TemplateKey")
                         .IsUnique()
-                        .HasDatabaseName("ux_templates_template_key");
+                        .HasDatabaseName("ux_templates_client_id_template_key");
 
-                    b.ToTable("templates", (string)null);
+                    b.ToTable("templates", "kalabit");
                 });
 
             modelBuilder.Entity("Data.Entities.TemplateVersion", b =>
@@ -412,6 +590,10 @@ namespace Data.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("html_body_template");
+
+                    b.Property<DateTimeOffset?>("PublishedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("published_at");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -448,10 +630,34 @@ namespace Data.Migrations
                         .IsUnique()
                         .HasDatabaseName("ux_template_versions_template_id_version_number");
 
-                    b.ToTable("template_versions", null, t =>
+                    b.ToTable("template_versions", "kalabit", t =>
                         {
+                            t.HasCheckConstraint("ck_template_versions_published_at", "\"status\" = 'Draft' OR \"published_at\" IS NOT NULL");
+
                             t.HasCheckConstraint("ck_template_versions_version_number_positive", "\"version_number\" > 0");
                         });
+                });
+
+            modelBuilder.Entity("Data.Entities.ApiKey", b =>
+                {
+                    b.HasOne("Data.Entities.Client", "Client")
+                        .WithMany("ApiKeys")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("Data.Entities.ClientDailyUsage", b =>
+                {
+                    b.HasOne("Data.Entities.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Client");
                 });
 
             modelBuilder.Entity("Data.Entities.Notification", b =>
@@ -526,6 +732,17 @@ namespace Data.Migrations
                     b.Navigation("Notification");
                 });
 
+            modelBuilder.Entity("Data.Entities.Template", b =>
+                {
+                    b.HasOne("Data.Entities.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
             modelBuilder.Entity("Data.Entities.TemplateVersion", b =>
                 {
                     b.HasOne("Data.Entities.Template", "Template")
@@ -535,6 +752,11 @@ namespace Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Template");
+                });
+
+            modelBuilder.Entity("Data.Entities.Client", b =>
+                {
+                    b.Navigation("ApiKeys");
                 });
 
             modelBuilder.Entity("Data.Entities.Notification", b =>

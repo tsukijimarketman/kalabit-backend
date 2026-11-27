@@ -10,6 +10,7 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.15" />
     <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.15" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="10.0.15" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.15" /> 
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.4" />
     <PackageVersion Include="Scalar.AspNetCore" Version="2.20.0" />
     <PackageVersion Include="coverlet.collector" Version="10.1.1" />

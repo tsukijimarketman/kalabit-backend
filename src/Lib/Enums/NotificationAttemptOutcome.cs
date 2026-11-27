@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Lib.Enums
+namespace Lib.Enums;
+
+public enum NotificationAttemptOutcome
 {
-    public enum NotificationAttemptOutcome
-    {
-        SmtpAccepted,
-        TransientFailure,
-        PermanentFailure
-    }
+    SmtpAccepted,
+    TransientFailure,
+    PermanentFailure
 }

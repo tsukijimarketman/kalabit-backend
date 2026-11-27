@@ -16,6 +16,9 @@ public sealed class TemplateVersionConfiguration : IEntityTypeConfiguration<Temp
             table.HasCheckConstraint(
                 "ck_template_versions_version_number_positive",
                 "\"version_number\" > 0");
+            table.HasCheckConstraint(
+                "ck_template_versions_published_at",
+                "\"status\" = 'Draft' OR \"published_at\" IS NOT NULL");
         });
 
         builder.HasKey(version => version.Id);
@@ -58,6 +61,9 @@ public sealed class TemplateVersionConfiguration : IEntityTypeConfiguration<Temp
             .HasConversion<string>()
             .HasMaxLength(20)
             .IsRequired();
+
+        builder.Property(version => version.PublishedAt)
+            .HasColumnName("published_at");
 
         builder.Property(version => version.ContentHash)
             .HasColumnName("content_hash")
